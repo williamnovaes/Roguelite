@@ -42,10 +42,11 @@ namespace Main {
                 Shoot();
             }
 
-            if (CheckForGrounded()) {
-                GroundedVerticalMovement();
-            } else {
+            if (!CheckForGrounded()) {
+                // GroundedVerticalMovement();
                 AirboneVerticalMovement();
+                UpdateJump();
+            } else {
             }
             UpdateAimPosition();
         }
@@ -95,9 +96,9 @@ namespace Main {
         }
 
         public void AirboneVerticalMovement() {
-            if (Mathf.Approximately(moveVector.y, 0f)  && moveVector.y > 0f) {
-                moveVector.y = 0f;
-            }
+            // if (Mathf.Approximately(moveVector.y, 0f)  && moveVector.y > 0f) {
+            //     moveVector.y = 0f;
+            // }
 
             moveVector.y -= gravity * Time.deltaTime;
         }
@@ -124,6 +125,12 @@ namespace Main {
             UpdateFacing();
         }
 
+        public void UpdateJump() {
+            if (!PlayerInput.Instance.Jump.Held && moveVector.y > 0.0f) {
+                moveVector.y -= 10 * Time.deltaTime;
+            }
+        }
+
         bool CheckForShootInput() {
             return PlayerInput.Instance.Shoot.Held;
         }
@@ -144,7 +151,9 @@ namespace Main {
 
         void UpdateFacing() {
             float dir = PlayerInput.Instance.AimHorizontal.Value;
-            spriteRenderer.flipX = dir >= 0 ? false : true;
+            if (dir != 0f) {
+                spriteRenderer.flipX = dir >= 0 ? false : true;
+            }
         }
     }
 }
